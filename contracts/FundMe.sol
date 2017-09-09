@@ -11,10 +11,10 @@ contract FundMe {
       _;
   }
 
-	function FundMe() {
+  function FundMe() {
     isOpen = false;
     owner = msg.sender;
-	}
+  }
 
   function open() onlyOwner {
     require(!isOpen);
