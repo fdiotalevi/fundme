@@ -1,21 +1,23 @@
-pragma solidity ^0.4.4;
+pragma solidity ^0.4.11;
 
-contract FundMe {
+import './openzeppelin/ownership/Ownable.sol';
+import './FundMeToken.sol';
+
+contract FundMe is Ownable{
 
   uint256 public raised;
   address public owner;
   bool public isOpen;
   mapping(address => uint256) private contributions;
   address[] private contributors;
-
-  modifier onlyOwner {
-      require(msg.sender == owner);
-      _;
-  }
+  FundMeToken public token;
+  uint256 public initialTokenPriceInWei;
 
   function FundMe() {
     isOpen = false;
     owner = msg.sender;
+    token = new FundMeToken();
+    initialTokenPriceInWei = 10000000000000000; //0.01 eth
   }
 
   function open() onlyOwner {
