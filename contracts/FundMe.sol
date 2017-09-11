@@ -3,7 +3,7 @@ pragma solidity ^0.4.11;
 import './openzeppelin/ownership/Ownable.sol';
 import './FundMeToken.sol';
 
-contract FundMe is Ownable{
+contract FundMe is Ownable {
 
   uint256 public raised;
   address public owner;
