@@ -13,6 +13,11 @@ contract FundMe is Ownable {
   FundMeToken public token;
   uint256 public initialTokenPriceInWei;
 
+  struct Conversion {
+    uint tokens;
+    uint rest;
+  }
+
   function FundMe() {
     isOpen = false;
     owner = msg.sender;
@@ -25,13 +30,26 @@ contract FundMe is Ownable {
     isOpen = true;
   }
 
+  function convert(uint256 weiAmount) internal returns(Conversion) {
+    uint256 tokens = weiAmount / initialTokenPriceInWei;
+    uint256 rest = weiAmount % initialTokenPriceInWei;
+    return Conversion({tokens: tokens, rest: rest});
+  }
+
   function contribute() payable {
     require(isOpen);
 
-    if (raised + msg.value > raised) {
+    if (raised + msg.value > raised) {  //TODO overflow check, can replace with SafeMath
       raised += msg.value;
       contributors.push(msg.sender);
       contributions[msg.sender] += msg.value;
+      Conversion memory conversion = convert(msg.value);
+      if (conversion.tokens > 0) {
+        token.mint(msg.sender, conversion.tokens);
+      }
+      if (conversion.rest > 0) {
+        msg.sender.transfer(conversion.rest);
+      }
       return;
     }
 
